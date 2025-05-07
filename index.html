@@ -1,26 +1,191 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Site de Olá</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bryam Company LTDA</title>
   <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+      scroll-behavior: smooth;
+    }
     body {
-      background-color: #f0f0f0;
-      font-family: Arial, sans-serif;
+      background: #0d1117;
+      color: #f0f6fc;
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(to right, #0d1117, #161b22);
+      text-align: center;
+      padding: 4rem 1rem;
+      position: relative;
+    }
+    header h1 {
+      font-size: 3rem;
+      color: #58a6ff;
+      animation: fadeInDown 1.2s ease;
+    }
+    header p {
+      color: #8b949e;
+      font-size: 1.2rem;
+      margin-top: 0.5rem;
+      animation: fadeIn 2s ease;
+    }
+    nav {
       display: flex;
       justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
+      background: #161b22;
+      border-bottom: 1px solid #30363d;
+    }
+    nav a {
+      color: #c9d1d9;
+      text-decoration: none;
+      padding: 1rem;
+      transition: background 0.3s, color 0.3s;
+    }
+    nav a:hover {
+      background: #21262d;
+      color: #58a6ff;
+    }
+    section {
+      padding: 4rem 2rem;
+    }
+    .hero {
+      background-image: url('https://images.unsplash.com/photo-1617872618966-5e0a5ed28eb9');
+      background-attachment: fixed;
+      background-size: cover;
+      background-position: center;
+      color: #fff;
+      text-align: center;
+      padding: 6rem 2rem;
+    }
+    .hero h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      animation: fadeInUp 1.2s ease;
+    }
+    .areas {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .area-card {
+      background: #21262d;
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid #30363d;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .area-card:hover {
+      transform: translateY(-8px);
+      border-color: #58a6ff;
+    }
+    .area-card h3 {
+      color: #58a6ff;
+      margin-bottom: 0.5rem;
+    }
+    .contact {
+      text-align: center;
+    }
+    .contact p {
+      margin-bottom: 1rem;
+    }
+    .socials a {
+      margin: 0 1rem;
+      color: #58a6ff;
+      text-decoration: none;
+      font-size: 1.5rem;
+      transition: transform 0.3s;
+    }
+    .socials a:hover {
+      transform: scale(1.2);
+    }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #8b949e;
+      border-top: 1px solid #30363d;
+      background: #161b22;
     }
 
-    h1 {
-      color: #333;
-      font-size: 3em;
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
 <body>
-  <h1>Olá, mundo!</h1>
+  <header>
+    <h1>Bryam Company LTDA</h1>
+    <p>Pesquisa e Desenvolvimento</p>
+  </header>
+  <nav>
+    <a href="#areas">Áreas</a>
+    <a href="#contato">Contato</a>
+  </nav>
+
+  <section class="hero">
+    <h2>Soluções em tecnológicas e inovação</h2>
+  </section>
+
+  <section id="areas">
+    <h2 style="text-align:center">Áreas de Atuação</h2>
+    <div class="areas">
+      <div class="area-card">
+        <h3>Desenvolvimento de Games</h3>
+        <p>Criação de jogos indie, IA e com engines modernas.</p>
+      </div>
+      <div class="area-card">
+        <h3>Impressão 3D</h3>
+        <p>Modelagem, prototipagem e produção com impressoras FDM.</p>
+      </div>
+      <div class="area-card">
+        <h3>Física de Materiais</h3>
+        <p>Análise de comportamento estrutural, resistência e propriedades de materias.</p>
+      </div>
+      <div class="area-card">
+        <h3>Mecânica</h3>
+        <p>Projetos mecânicos com simulação</p>
+      </div>
+      <div class="area-card">
+        <h3>Elétrica</h3>
+        <p>Montagem e controle de sistemas elétricos embarcados.</p>
+      </div>
+      <div class="area-card">
+        <h3>Robótica e Automação</h3>
+        <p>Desenvolvimento de sistemas eletrônicos, integração com sensores e atuadores.</p>
+      </div>
+      <div class="area-card">
+        <h3>Estudos Militares</h3>
+        <p>Pesquisa e prototipagem de materiais bélicos, projetos e armamentos civis.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contato" class="contact">
+    <h2>Contato</h2>
+    <p>Email: <a href="mailto:bsidoly123@gmail.com">bsidoly123@gmail.com</a></p>
+    <p>Telefone: +55 (46) 99982-3017</p>
+    <div class="socials">
+      <a href="#"><i class="fab fa-linkedin"></i></a>
+      <a href="#"><i class="fab fa-github"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Bryam Company LTDA. Todos os direitos reservados.</p>
+  </footer>
 </body>
 </html>
