@@ -77,6 +77,7 @@
       border-radius: 12px;
       border: 1px solid #30363d;
       transition: transform 0.3s, border-color 0.3s;
+      cursor: pointer;
     }
     .area-card:hover {
       transform: translateY(-8px);
@@ -85,6 +86,41 @@
     .area-card h3 {
       color: #58a6ff;
       margin-bottom: 0.5rem;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+    .modal-content {
+      background: #21262d;
+      color: #f0f6fc;
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 600px;
+      width: 100%;
+    }
+    .modal-header h3 {
+      color: #58a6ff;
+    }
+    .close-btn {
+      background: #ff5c5c;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      float: right;
+    }
+    .close-btn:hover {
+      background: #e04a4a;
     }
     .contact {
       text-align: center;
@@ -142,36 +178,69 @@
   <section id="areas">
     <h2 style="text-align:center">Áreas de Atuação</h2>
     <div class="areas">
-      <div class="area-card">
+      <div class="area-card" onclick="openModal('gameDev')">
         <h3>Desenvolvimento de Games</h3>
         <p>Criação de jogos indie, IA e com engines modernas.</p>
       </div>
-      <div class="area-card">
+      <div class="area-card" onclick="openModal('3dPrinting')">
         <h3>Impressão 3D</h3>
         <p>Modelagem, prototipagem e produção com impressoras FDM.</p>
       </div>
-      <div class="area-card">
+      <div class="area-card" onclick="openModal('materialsPhysics')">
         <h3>Física de Materiais</h3>
         <p>Análise de comportamento estrutural, resistência e propriedades de materias.</p>
       </div>
-      <div class="area-card">
+      <div class="area-card" onclick="openModal('mechanical')">
         <h3>Mecânica</h3>
         <p>Projetos mecânicos com simulação</p>
       </div>
-      <div class="area-card">
+      <div class="area-card" onclick="openModal('electrical')">
         <h3>Elétrica</h3>
         <p>Montagem e controle de sistemas elétricos embarcados.</p>
       </div>
-      <div class="area-card">
+      <div class="area-card" onclick="openModal('robotics')">
         <h3>Robótica e Automação</h3>
         <p>Desenvolvimento de sistemas eletrônicos, integração com sensores e atuadores.</p>
       </div>
-      <div class="area-card">
+      <div class="area-card" onclick="openModal('militaryStudies')">
         <h3>Estudos Militares</h3>
         <p>Pesquisa e prototipagem de materiais bélicos, projetos e armamentos civis.</p>
       </div>
     </div>
   </section>
+
+  <!-- Modals -->
+  <div id="gameDev" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Desenvolvimento de Games</h3>
+        <button class="close-btn" onclick="closeModal('gameDev')">Fechar</button>
+      </div>
+      <p>Aqui, criamos jogos com IA avançada e utilizamos as mais modernas engines para garantir experiências imersivas.</p>
+    </div>
+  </div>
+
+  <div id="3dPrinting" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Impressão 3D</h3>
+        <button class="close-btn" onclick="closeModal('3dPrinting')">Fechar</button>
+      </div>
+      <p>Modelamos e prototipamos objetos com impressoras FDM, oferecendo soluções rápidas e precisas.</p>
+    </div>
+  </div>
+
+  <div id="materialsPhysics" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Física de Materiais</h3>
+        <button class="close-btn" onclick="closeModal('materialsPhysics')">Fechar</button>
+      </div>
+      <p>Realizamos estudos detalhados sobre as propriedades físicas dos materiais, sua resistência e comportamento estrutural.</p>
+    </div>
+  </div>
+
+  <!-- Add modals for other areas here -->
 
   <section id="contato" class="contact">
     <h2>Contato</h2>
@@ -187,5 +256,15 @@
   <footer>
     <p>&copy; 2025 Bryam Company LTDA. Todos os direitos reservados.</p>
   </footer>
+
+  <script>
+    function openModal(area) {
+      document.getElementById(area).style.display = 'flex';
+    }
+
+    function closeModal(area) {
+      document.getElementById(area).style.display = 'none';
+    }
+  </script>
 </body>
 </html>
