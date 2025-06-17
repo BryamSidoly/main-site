@@ -1,194 +1,1424 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Bryam Company LTDA - Soluções em tecnologia, desenvolvimento de jogos, impressão 3D, eletrônica e automação.">
-  <meta name="keywords" content="Bryam Company, tecnologia, jogos, impressão 3D, robótica, automação, pesquisa, desenvolvimento">
-  <meta name="author" content="Bryam Company LTDA">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" crossorigin=""></script>
   <title>Bryam Company LTDA</title>
   <style>
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-      font-family: 'Segoe UI', sans-serif;
-      scroll-behavior: smooth;
+    /* ======= CSS ESTILOS AQUI (Apple-like modernizados + extras) ======= */
+    :root {
+      --color-bg: #f5f5f7;
+      --color-text: #1d1d1f;
+      --color-accent: #0071e3;
+      --color-accent-hover: #005bb5;
+      --color-card-bg: #ffffff;
+      --color-glass-bg: rgba(255, 255, 255, 0.4);
+      --color-neumorph-bg: #e7e7eb;
+      --dark-bg: #1c1c1e;
+      --dark-text: #f5f5f7;
+      --dark-card-bg: #2c2c2e;
+      --dark-glass-bg: rgba(255, 255, 255, 0.1);
+      --dark-neumorph-bg: #3a3a3c;
+      --shadow-light: rgba(255, 255, 255, 0.9);
+      --shadow-dark: rgba(0, 0, 0, 0.1);
+      --shadow-neumorph-light: rgba(255, 255, 255, 0.85);
+      --shadow-neumorph-dark: rgba(0, 0, 0, 0.1);
+      --transition-fast: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-medium: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      --font-primary: -apple-system, BlinkMacSystemFont, "San Francisco", "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      --font-secondary: "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
     }
+
     body {
-      background: #0d1117;
-      color: #f0f6fc;
-      line-height: 1.6;
+      font-family: var(--font-primary);
+      background: var(--color-bg);
+      color: var(--color-text);
+      margin: 0;
+      padding: 0;
+      transition: background-color var(--transition-medium), color var(--transition-medium);
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
+
+    body.dark {
+      background: var(--dark-bg);
+      color: var(--dark-text);
+    }
+
+    /* HEADER */
     header {
-      background: linear-gradient(to right, #0d1117, #161b22);
+      position: sticky;
+      top: 0;
+      background: var(--color-card-bg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.4rem 3rem;
+      box-shadow: 0 4px 12px var(--shadow-dark);
+      z-index: 1000;
+      transition: background-color var(--transition-medium), box-shadow var(--transition-medium);
+      backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    body.dark header {
+      background: var(--dark-card-bg);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.9);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    header h1 {
+      font-size: 1.9rem;
+      font-weight: 600;
+      color: var(--color-accent);
+      user-select: none;
+      cursor: default;
+      letter-spacing: 0.05em;
+      font-family: var(--font-secondary);
+      text-shadow: 0 0 8px var(--color-accent);
+      transition: color var(--transition-medium);
+    }
+
+    body.dark header h1 {
+      color: var(--color-accent);
+      text-shadow: 0 0 12px var(--color-accent);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2.8rem;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--color-text);
+      font-weight: 500;
+      font-size: 1.1rem;
+      padding: 0.4rem 0.5rem;
+      position: relative;
+      transition: color var(--transition-fast);
+      user-select: none;
+      letter-spacing: 0.04em;
+    }
+
+    nav a::after {
+      content: "";
+      position: absolute;
+      width: 0%;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background-color: var(--color-accent);
+      transition: width var(--transition-fast);
+      border-radius: 2px;
+    }
+
+    nav a:hover,
+    nav a.active {
+      color: var(--color-accent-hover);
+    }
+
+    nav a:hover::after,
+    nav a.active::after {
+      width: 100%;
+    }
+
+    body.dark nav a {
+      color: var(--dark-text);
+    }
+
+    body.dark nav a:hover,
+    body.dark nav a.active {
+      color: var(--color-accent);
+    }
+
+    body.dark nav a:hover::after,
+    body.dark nav a.active::after {
+      background-color: var(--color-accent);
+    }
+
+    /* BOTÃO MODO ESCURO */
+    #modo {
+      background: var(--color-accent);
+      border: none;
+      color: white;
+      font-size: 1.25rem;
+      padding: 0.75rem 1.3rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
+      box-shadow: 0 8px 16px rgba(0, 113, 227, 0.4);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      font-family: var(--font-secondary);
+      user-select: none;
+      text-transform: uppercase;
+    }
+
+    #modo:hover {
+      background: var(--color-accent-hover);
+      box-shadow: 0 12px 24px rgba(0, 91, 181, 0.6);
+    }
+
+    body.dark #modo {
+      background: var(--color-accent-hover);
+    }
+
+    body.dark #modo:hover {
+      background: var(--color-accent);
+      box-shadow: 0 12px 24px rgba(0, 113, 227, 0.7);
+    }
+
+    /* SEÇÕES */
+    .section {
+      padding: 5rem 3rem;
+      max-width: 1100px;
+      margin: 4rem auto;
+      border-radius: 28px;
+      box-shadow: 0 18px 36px var(--shadow-dark);
+      transition: background-color var(--transition-medium), box-shadow var(--transition-medium);
+      background-color: var(--color-card-bg);
+      opacity: 0;
+      transform: translateY(40px);
+      transition:
+        background-color var(--transition-medium),
+        box-shadow var(--transition-medium),
+        opacity 0.8s ease-out,
+        transform 0.8s ease-out;
+    }
+
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    body.dark .section {
+      background-color: var(--dark-card-bg);
+      box-shadow: 0 22px 44px rgba(0, 0, 0, 0.75);
+    }
+
+    /* Glassmorphism */
+    .glass {
+      background: var(--color-glass-bg);
+      backdrop-filter: saturate(180%) blur(30px);
+      border-radius: 30px;
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      color: #000000dd;
+      font-weight: 600;
       text-align: center;
-      padding: 4rem 1rem;
+      user-select: none;
+      padding: 2rem;
+      box-shadow: 0 8px 48px rgba(0, 0, 0, 0.1);
+      letter-spacing: 0.04em;
+      font-size: 1.2rem;
+    }
+
+    body.dark .glass {
+      background: var(--dark-glass-bg);
+      border-color: rgba(255, 255, 255, 0.12);
+      color: #ddd;
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Neumorphism */
+    .neumorph {
+      background: var(--color-neumorph-bg);
+      border-radius: 32px;
+      box-shadow:
+        15px 15px 30px var(--shadow-neumorph-dark),
+        -15px -15px 30px var(--shadow-neumorph-light);
+      color: var(--color-text);
+      font-weight: 500;
+      user-select: none;
+      padding: 2rem;
+      font-size: 1.15rem;
+      letter-spacing: 0.03em;
+      transition: background-color var(--transition-medium), box-shadow var(--transition-medium);
+    }
+
+    body.dark .neumorph {
+      background: var(--dark-neumorph-bg);
+      box-shadow:
+        15px 15px 35px rgba(0, 0, 0, 0.85),
+        -15px -15px 35px rgba(90, 90, 90, 0.85);
+      color: var(--dark-text);
+    }
+
+    /* Cards */
+    .cards {
+      display: grid;
+      gap: 2.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      margin-top: 3rem;
+    }
+
+    .card {
+      background: var(--color-card-bg);
+      padding: 2.5rem 3rem;
+      border-radius: 28px;
+      box-shadow: 0 12px 24px var(--shadow-dark);
+      font-size: 1.25rem;
+      font-weight: 600;
+      cursor: default;
+      position: relative;
+      transition:
+        transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        background-color var(--transition-medium),
+        color var(--transition-medium);
+      user-select: none;
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.02em;
+      text-align: center;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      transform: translateY(-18px) scale(1.07) rotate(-1deg);
+      box-shadow: 0 18px 48px var(--color-accent);
+      background-color: var(--color-accent);
+      color: white;
+      z-index: 10;
+      text-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Tooltip */
+    .card[data-tooltip] {
       position: relative;
     }
-    header h1 {
-      font-size: 3rem;
-      color: #58a6ff;
-      animation: fadeInDown 1.2s ease;
+
+    .card[data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 130%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--color-accent-hover);
+      color: white;
+      padding: 0.5rem 0.9rem;
+      border-radius: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      white-space: nowrap;
+      font-size: 0.9rem;
+      user-select: none;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+      font-weight: 600;
+      letter-spacing: 0.03em;
     }
-    header p {
-      color: #8b949e;
-      font-size: 1.2rem;
-      margin-top: 0.5rem;
-      animation: fadeIn 2s ease;
+
+    .card[data-tooltip]:hover::after {
+      opacity: 1;
     }
-    nav {
+
+    /* FORMULÁRIO */
+    form {
+      max-width: 650px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+      font-weight: 400;
+    }
+
+    input,
+    textarea {
+      padding: 1.3rem 1.5rem;
+      border-radius: 20px;
+      border: 1.8px solid #c7c7cc;
+      font-size: 1.1rem;
+      font-weight: 400;
+      transition: border-color var(--transition-fast);
+      font-family: var(--font-primary);
+      resize: vertical;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+      letter-spacing: 0.01em;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #8e8e93;
+      font-style: italic;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--color-accent);
+      outline: none;
+      box-shadow: 0 0 8px var(--color-accent);
+    }
+
+    button[type="submit"] {
+      background: var(--color-accent);
+      border: none;
+      color: white;
+      font-size: 1.25rem;
+      font-weight: 700;
+      padding: 1.3rem;
+      border-radius: 28px;
+      cursor: pointer;
+      box-shadow: 0 12px 28px rgba(0, 113, 227, 0.5);
+      transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      user-select: none;
+      font-family: var(--font-secondary);
+    }
+
+    button[type="submit"]:hover {
+      background: var(--color-accent-hover);
+      box-shadow: 0 16px 38px rgba(0, 91, 181, 0.6);
+    }
+
+    /* Mensagem do formulário */
+    #msg {
+      text-align: center;
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin-top: 0.7rem;
+      user-select: none;
+      color: var(--color-accent-hover);
+      letter-spacing: 0.02em;
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 2.4rem;
+      text-align: center;
+      font-size: 1rem;
+      color: var(--color-text);
+      background: var(--color-card-bg);
+      box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.06);
+      transition: background-color var(--transition-medium), color var(--transition-medium);
+      user-select: none;
+      letter-spacing: 0.02em;
+    }
+
+    body.dark footer {
+      background: var(--dark-card-bg);
+      color: var(--dark-text);
+    }
+
+    .social-icons {
       display: flex;
       justify-content: center;
-      background: #161b22;
-      border-bottom: 1px solid #30363d;
+      gap: 1.5rem;
     }
-    nav a {
-      color: #c9d1d9;
-      text-decoration: none;
-      padding: 1rem;
-      transition: background 0.3s, color 0.3s;
-    }
-    nav a:hover {
-      background: #21262d;
-      color: #58a6ff;
-    }
-    section {
-      padding: 4rem 2rem;
-    }
-    .hero {
-      background-image: url('https://images.unsplash.com/photo-1617872618966-5e0a5ed28eb9');
-      background-attachment: fixed;
-      background-size: cover;
-      background-position: center;
-      color: #fff;
-      text-align: center;
-      padding: 6rem 2rem;
-    }
-    .hero h2 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      animation: fadeInUp 1.2s ease;
-    }
-    .areas {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-      margin-top: 2rem;
-    }
-    .area-card {
-      background: #21262d;
-      padding: 1.5rem;
-      border-radius: 12px;
-      border: 1px solid #30363d;
-      transition: transform 0.3s, border-color 0.3s;
-    }
-    .area-card:hover {
-      transform: translateY(-8px);
-      border-color: #58a6ff;
-    }
-    .area-card h3 {
-      color: #58a6ff;
-      margin-bottom: 0.5rem;
-    }
-    .contact {
-      text-align: center;
-    }
-    .contact p {
-      margin-bottom: 1rem;
-    }
-    .socials a {
-      margin: 0 1rem;
-      color: #58a6ff;
-      text-decoration: none;
+
+    .social-icon {
+      color: var(--color-accent);
       font-size: 1.5rem;
-      transition: transform 0.3s;
+      transition: color 0.3s ease, transform 0.3s ease;
     }
-    .socials a:hover {
+
+    .social-icon:hover {
+      color: var(--color-accent-hover);
       transform: scale(1.2);
     }
-    footer {
-      text-align: center;
-      padding: 2rem;
-      color: #8b949e;
-      border-top: 1px solid #30363d;
-      background: #161b22;
+
+    /* VOLTAR AO TOPO */
+    #backToTop {
+      position: fixed;
+      bottom: 3rem;
+      right: 3rem;
+      background: var(--color-accent);
+      color: white;
+      padding: 0.9rem 1.3rem;
+      border-radius: 50px;
+      font-size: 1.4rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 12px 26px rgba(0, 113, 227, 0.6);
+      user-select: none;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-fast);
+      z-index: 1100;
+      font-family: var(--font-secondary);
     }
 
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
+    #backToTop.show {
+      opacity: 1;
+      pointer-events: auto;
     }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+
+    #backToTop:hover {
+      background: var(--color-accent-hover);
+      box-shadow: 0 16px 38px rgba(0, 91, 181, 0.8);
     }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+
+    /* CARROSSEL DE DEPOIMENTOS */
+    .carousel {
+      position: relative;
+      max-width: 700px;
+      margin: 3rem auto 0;
+      overflow: hidden;
+      border-radius: 28px;
+      box-shadow: 0 18px 36px var(--shadow-dark);
+      background: var(--color-card-bg);
+      transition: background-color var(--transition-medium), box-shadow var(--transition-medium);
+    }
+
+    body.dark .carousel {
+      background: var(--dark-card-bg);
+      box-shadow: 0 22px 44px rgba(0, 0, 0, 0.75);
+    }
+
+    .carousel-inner {
+      display: flex;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .testimonial {
+      min-width: 100%;
+      padding: 3rem 4rem;
+      box-sizing: border-box;
+      color: var(--color-text);
+      user-select: none;
+      font-size: 1.15rem;
+      font-weight: 500;
+      line-height: 1.6;
+      font-style: italic;
+      letter-spacing: 0.02em;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+    }
+
+    body.dark .testimonial {
+      color: var(--dark-text);
+    }
+
+    .testimonial-author {
+      font-style: normal;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-align: right;
+      letter-spacing: 0.06em;
+      color: var(--color-accent);
+    }
+
+    body.dark .testimonial-author {
+      color: var(--color-accent);
+    }
+
+    /* Controles */
+    .carousel-controls {
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 0.8rem;
+      user-select: none;
+    }
+
+    .carousel-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #ccc;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .carousel-dot.active {
+      background: var(--color-accent);
+    }
+
+    /* Botões setas */
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2.6rem;
+      background: rgba(255, 255, 255, 0.75);
+      border-radius: 50%;
+      padding: 0 0.35rem 0 0.4rem;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      transition: background-color 0.3s ease;
+      user-select: none;
+      color: var(--color-accent);
+    }
+
+    .carousel-arrow:hover {
+      background: var(--color-accent);
+      color: white;
+      box-shadow: 0 6px 22px rgba(0, 91, 181, 0.8);
+    }
+
+    .carousel-arrow.left {
+      left: 1rem;
+    }
+
+    .carousel-arrow.right {
+      right: 1rem;
+    }
+
+    body.dark .carousel-arrow {
+      background: rgba(60, 60, 60, 0.75);
+      color: var(--color-accent);
+    }
+
+    /* IMAGENS CARD */
+    .card img {
+      max-width: 120px;
+      border-radius: 18px;
+      margin-bottom: 1.2rem;
+      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.1));
+      transition: filter 0.4s ease;
+    }
+
+    .card:hover img {
+      filter: drop-shadow(0 6px 20px var(--color-accent));
+      transform: scale(1.05);
+    }
+
+    /* SOBRE - estilo imagem lado a lado */
+    .sobre-container {
+      display: flex;
+      gap: 3rem;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 3rem;
+    }
+
+    .sobre-text {
+      flex: 1 1 450px;
+      font-size: 1.18rem;
+      font-weight: 500;
+      line-height: 1.6;
+      letter-spacing: 0.03em;
+      user-select: none;
+    }
+
+    .sobre-img {
+      flex: 1 1 320px;
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px var(--shadow-dark);
+      transition: box-shadow 0.5s ease;
+    }
+
+    .sobre-img img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+      user-select: none;
+    }
+
+    .sobre-img:hover {
+      box-shadow: 0 24px 48px var(--color-accent);
+      cursor: default;
+    }
+
+    body.dark .sobre-img {
+      box-shadow: 0 22px 48px rgba(0, 0, 0, 0.75);
+    }
+
+    /* SERVIÇOS */
+    .servicos h2 {
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      margin-bottom: 1.5rem;
+      user-select: none;
+    }
+
+    /* DEPOIMENTOS */
+    .depoimentos h2 {
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      margin-bottom: 1.5rem;
+      user-select: none;
+    }
+
+    /* CONTATO */
+    .contato h2 {
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      margin-bottom: 1.8rem;
+      user-select: none;
+    }
+
+    /* FAQ*/
+    .faq-item {
+      margin-bottom: 1rem;
+    }
+
+    .faq-question {
+      width: 100%;
+      background: var(--color-card-bg);
+      border: none;
+      padding: 1rem 1.5rem;
+      text-align: left;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 4px 10px var(--shadow-dark);
+      color: var(--color-text);
+    }
+
+    body.dark .faq-question {
+      background: var(--dark-card-bg);
+      color: var(--dark-text);
+    }
+
+    .faq-question:hover,
+    .faq-question[aria-expanded="true"] {
+      background: var(--color-accent);
+      color: white;
+    }
+
+    .faq-answer {
+      padding: 0.75rem 1.5rem;
+      background: var(--color-bg);
+      margin-top: 0.3rem;
+      border-radius: 0 0 12px 12px;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+      color: var(--color-text);
+    }
+
+    body.dark .faq-answer {
+      background: var(--dark-bg);
+      color: var(--dark-text);
+    }
+
+
+    /* ERRO & SUCESSO FORM */
+    input.invalid,
+    textarea.invalid {
+      border-color: #ff453a;
+      box-shadow: 0 0 10px #ff453a;
+      background-color: #fff0f0;
+    }
+
+    input.valid,
+    textarea.valid {
+      border-color: #34c759;
+      box-shadow: 0 0 10px #34c759;
+    }
+
+    /* RESPONSIVO */
+    @media (max-width: 720px) {
+      header {
+        padding: 1.2rem 1.5rem;
+      }
+
+      nav ul {
+        gap: 1.2rem;
+      }
+
+      nav a {
+        font-size: 1rem;
+      }
+
+      .section {
+        margin: 2rem 1.5rem;
+        padding: 3rem 2rem;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .sobre-container {
+        flex-direction: column;
+      }
+
+      .sobre-text,
+      .sobre-img {
+        flex: none;
+        width: 100%;
+      }
+
+      .carousel {
+        margin: 2rem 1rem 0;
+      }
+
+      .testimonial {
+        padding: 2rem 1.5rem;
+        font-size: 1.05rem;
+      }
+    }
+
+    /*PROMO*/
+    .promo-countdown {
+      background: var(--color-accent);
+      color: white;
+      text-align: center;
+      padding: 0.7rem 1rem;
+      font-weight: 700;
+      font-family: var(--font-secondary);
+      user-select: none;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 2000;
+    }
+
+    .modal.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: var(--color-bg);
+      padding: 2rem 2.5rem;
+      border-radius: 20px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 20px 40px var(--shadow-dark);
+      position: relative;
+      text-align: center;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: transparent;
+      border: none;
+      font-size: 2.5rem;
+      cursor: pointer;
+      color: var(--color-text);
+      transition: color 0.3s ease;
+    }
+
+    .modal-close:hover {
+      color: var(--color-accent);
+    }
+
+    .modal-content input[type="email"] {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      margin-bottom: 1rem;
+      border-radius: 12px;
+      border: 1.5px solid var(--color-accent);
+      font-size: 1rem;
+      outline: none;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .modal-content input[type="email"]:focus {
+      box-shadow: 0 0 8px var(--color-accent);
+    }
+
+    .modal-content button[type="submit"] {
+      background: var(--color-accent);
+      color: white;
+      border: none;
+      padding: 0.85rem 2rem;
+      border-radius: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .modal-content button[type="submit"]:hover {
+      background: var(--color-accent-hover);
+    }
+
+    #newsletterMsg {
+      margin-top: 0.5rem;
+      font-weight: 600;
+    }
+
+    /*LANG*/
+    #langToggle {
+      background: var(--color-bg);
+      border: 2px solid var(--color-accent);
+      color: var(--color-accent);
+      padding: 0.5rem 1rem;
+      margin-left: 1rem;
+      border-radius: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font-secondary);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    #langToggle:hover {
+      background: var(--color-accent);
+      color: white;
+    }
+
+    body.dark #langToggle {
+      background: var(--dark-bg);
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+    }
+
+    body.dark #langToggle:hover {
+      background: var(--color-accent);
+      color: white;
+    }
+
+    /*MAP*/
+    .map {
+      width: 100%;
+      height: 300px;
+      border-radius: 20px;
+      margin-top: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
+
 <body>
+  <div id="promoCountdown" class="promo-countdown" aria-live="polite">
+    <p>Promoção termina em: <span id="countdownTimer">00d 00h 00m 00s</span></p>
+  </div>
   <header>
     <h1>Bryam Company LTDA</h1>
-    <p>Pesquisa e Desenvolvimento</p>
+    <nav>
+      <ul>
+        <li><a href="#sobre" class="active">Sobre</a></li>
+        <li><a href="#servicos">Serviços</a></li>
+        <li><a href="#depoimentos">Depoimentos</a></li>
+        <li><a href="#contato">Contato</a></li>
+      </ul>
+    </nav>
+    <button id="modo" aria-label="Alternar modo escuro">Modo Escuro</button>
+    <button id="langToggle" aria-label="Alternar idioma">EN</button>
   </header>
-  <nav>
-    <a href="#areas">Áreas</a>
-    <a href="#contato">Contato</a>
-  </nav>
 
-  <section class="hero">
-    <h2>Soluções em tecnológicas e inovação</h2>
-  </section>
+  <main>
+    <!-- SOBRE -->
+    <section id="sobre" class="section">
+      <h2 data-i18n="sobre">Quem Somos</h2>
+      <div class="sobre-container">
+        <div class="sobre-text glass neumorph">
+          <p data-i18n="sobreTexto1">Pesquisa e Desenvolvimento</p>
+          <p data-i18n="sobreTexto2">Soluções em tecnológicas e inovação</p>
+        </div>
+        <div class="sobre-img neumorph">
+          <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80"
+            alt="Equipe dedicada trabalhando" />
+        </div>
+      </div>
+    </section>
 
-  <section id="areas">
-    <h2 style="text-align:center">Áreas de Atuação</h2>
-    <div class="areas">
-      <div class="area-card">
-        <h3>Desenvolvimento de Games</h3>
-        <p>Criação de jogos indie, IA e com engines modernas.</p>
-      </div>
-      <div class="area-card">
-        <h3>Impressão 3D</h3>
-        <p>Modelagem, prototipagem e produção com impressoras FDM.</p>
-      </div>
-      <div class="area-card">
-        <h3>Física de Materiais</h3>
-        <p>Análise de comportamento estrutural, resistência e propriedades de materias.</p>
-      </div>
-      <div class="area-card">
-        <h3>Mecânica</h3>
-        <p>Projetos mecânicos com simulação</p>
-      </div>
-      <div class="area-card">
-        <h3>Elétrica</h3>
-        <p>Montagem e controle de sistemas elétricos embarcados.</p>
-      </div>
-      <div class="area-card">
-        <h3>Robótica e Automação</h3>
-        <p>Desenvolvimento de sistemas eletrônicos, integração com sensores e atuadores.</p>
-      </div>
-      <div class="area-card">
-        <h3>Estudos Militares</h3>
-        <p>Pesquisa e prototipagem de materiais bélicos, projetos e armamentos civis.</p>
-      </div>
-    </div>
-  </section>
+    <!-- SERVIÇOS -->
+    <section id="servicos" class="section servicos">
+      <h2 data-i18n="servicos">Áreas de Atuação</h2>
+      <div class="cards">
+        <div class="card" data-tooltip="Criação de jogos indie com IA e engines modernas" data-i18n="servico1">
+          <img src="https://cdn-icons-png.flaticon.com/512/808/808439.png" alt="Ícone de game controller" />
+          Criação de jogos indie, IA e com engines modernas.
+        </div>
 
-  <section id="contato" class="contact">
-    <h2>Contato</h2>
-    <p>Email: <a href="mailto:bsidoly123@gmail.com">bsidoly123@gmail.com</a></p>
-    <p>Telefone: +55 (46) 99982-3017</p>
-    <div class="socials">
-      <a href="#"><i class="fab fa-linkedin"></i></a>
-      <a href="#"><i class="fab fa-github"></i></a>
-      <a href="#"><i class="fab fa-instagram"></i></a>
-    </div>
-  </section>
+        <div class="card" data-tooltip="Modelagem e impressão 3D com FDM" data-i18n="servico2">
+          <img src="	https://cdn-icons-png.flaticon.com/512/4841/4841324.png" alt="Ícone de impressora 3D" />
+          Modelagem, prototipagem e produção com impressoras FDM.
+        </div>
+
+        <div class="card" data-tooltip="Análise estrutural e de materiais" data-i18n="servico3">
+          <img src="https://cdn-icons-png.flaticon.com/512/9920/9920910.png" alt="Ícone de análise estrutural" />
+          Análise de comportamento estrutural, resistência e propriedades de materiais.
+        </div>
+
+        <div class="card" data-tooltip="Projetos mecânicos com simulação" data-i18n="servico4">
+          <img src="https://cdn-icons-png.flaticon.com/512/4451/4451258.png" alt="Ícone de engrenagens" />
+          Projetos mecânicos com simulação.
+        </div>
+
+        <div class="card" data-tooltip="Montagem e controle de sistemas elétricos embarcados" data-i18n="servico5">
+          <img src="https://cdn-icons-png.flaticon.com/512/17120/17120573.png" alt="Ícone de circuito eletrônico" />
+          Montagem e controle de sistemas elétricos embarcados.
+        </div>
+
+        <div class="card" data-tooltip="Desenvolvimento de sistemas eletrônicos e integração com sensores"
+          data-i18n="servico6">
+          <img src=	"https://cdn-icons-png.flaticon.com/512/7390/7390481.png" alt="Ícone de sensor eletrônico" />
+          Desenvolvimento de sistemas eletrônicos, integração com sensores e atuadores.
+        </div>
+
+        <div class="card" data-tooltip="Pesquisa de materiais e projetos bélicos" data-i18n="servico7">
+          <img src="https://cdn-icons-png.flaticon.com/512/6584/6584650.png" alt="Ícone de tecnologia militar" />
+          Pesquisa e prototipagem de materiais bélicos, projetos e armamentos civis.
+        </div>
+
+      </div>
+    </section>
+
+    <!-- DEPOIMENTOS -->
+    <section id="depoimentos" class="section depoimentos">
+      <h2 data-i18n="depoimentos">Depoimentos</h2>
+      <div class="carousel" aria-label="Depoimentos de clientes">
+        <div class="carousel-inner" id="carouselInner">
+          <div class="testimonial" role="group" aria-roledescription="slide" aria-label="Depoimento 1">
+            <p data-i18n="dep1">"Excelente serviço e atendimento! Superaram minhas expectativas e entregaram um produto
+              incrível."</p>
+            <div class="testimonial-author" data-i18n="depAutor1">- João Silva</div>
+          </div>
+          <div class="testimonial" role="group" aria-roledescription="slide" aria-label="Depoimento 2">
+            <p>"Equipe muito profissional e atenciosa. O design ficou lindo e funcional."</p>
+            <div class="testimonial-author">- Maria Oliveira</div>
+          </div>
+          <div class="testimonial" role="group" aria-roledescription="slide" aria-label="Depoimento 3">
+            <p>"Recomendo demais! Sempre prontos para ajudar e com soluções inovadoras."</p>
+            <div class="testimonial-author">- Pedro Santos</div>
+          </div>
+        </div>
+        <button class="carousel-arrow left" aria-label="Depoimento anterior" id="prev">&#10094;</button>
+        <button class="carousel-arrow right" aria-label="Próximo depoimento" id="next">&#10095;</button>
+        <div class="carousel-controls" id="carouselControls" role="tablist" aria-label="Controle dos depoimentos">
+          <button class="carousel-dot active" role="tab" aria-selected="true" aria-controls="slide1" id="dot1"
+            tabindex="0"></button>
+          <button class="carousel-dot" role="tab" aria-selected="false" aria-controls="slide2" id="dot2"
+            tabindex="-1"></button>
+          <button class="carousel-dot" role="tab" aria-selected="false" aria-controls="slide3" id="dot3"
+            tabindex="-1"></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section faq">
+      <h2 data-i18n="faq">FAQ - Perguntas Frequentes</h2>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq1" id="faq1-btn" data-i18n="faq1q">Como
+          funciona o processo
+          de desenvolvimento?</button>
+        <div id="faq1" class="faq-answer" role="region" aria-labelledby="faq1-btn" hidden>
+          <p>Nosso processo envolve análise, design, desenvolvimento, testes e entrega, tudo alinhado às suas
+            necessidades.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq2" id="faq2-btn">Quanto tempo demora para
+          entregar um projeto?</button>
+        <div id="faq2" class="faq-answer" role="region" aria-labelledby="faq2-btn" hidden>
+          <p>O tempo varia conforme o escopo, mas normalmente entregamos entre 4 a 8 semanas.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq3" id="faq3-btn">Vocês oferecem suporte
+          após a entrega?</button>
+        <div id="faq3" class="faq-answer" role="region" aria-labelledby="faq3-btn" hidden>
+          <p>Sim! Temos planos de suporte técnico e manutenção contínua.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTATO -->
+    <section id="contato" class="section contato">
+      <h2 data-i18n="contato">Contato</h2>
+      <form id="formContato" novalidate>
+        <input type="text" id="nome" name="nome" placeholder="Seu nome" required minlength="3"
+          data-i18n-placeholder="nomePlaceholder" />
+        <input type="email" id="email" name="email" placeholder="Seu e-mail" required
+          data-i18n-placeholder="emailPlaceholder" />
+        <textarea id="mensagem" name="mensagem" placeholder="Sua mensagem" required minlength="10" rows="4"
+          data-i18n-placeholder="mensagemPlaceholder"></textarea>
+        <button type="submit" data-i18n="enviar">Enviar</button>
+        <div id="msg" role="alert" aria-live="polite"></div>
+      </form>
+      <div id="map" class="map"></div>
+    </section>
+  </main>
+
+  <button id="backToTop" aria-label="Voltar ao topo">&#8679;</button>
 
   <footer>
-    <p>&copy; 2025 Bryam Company LTDA. Todos os direitos reservados.</p>
+    <div class="social-icons">
+      <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook" class="social-icon facebook">
+        <!-- Facebook SVG -->
+        <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M22 12a10 10 0 10-11.62 9.87v-6.98h-2.5v-2.89h2.5v-2.2c0-2.46 1.49-3.82 3.77-3.82 1.09 0 2.23.2 2.23.2v2.44h-1.25c-1.23 0-1.61.77-1.61 1.56v1.82h2.74l-.44 2.89h-2.3v6.98A10 10 0 0022 12z" />
+        </svg>
+      </a>
+      <a href="https://twitter.com" target="_blank" rel="noopener" aria-label="Twitter" class="social-icon twitter">
+        <!-- Twitter SVG -->
+        <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M22.46 6c-.77.35-1.6.59-2.46.7a4.26 4.26 0 001.87-2.36 8.47 8.47 0 01-2.7 1.03 4.23 4.23 0 00-7.2 3.86A12 12 0 013 5.14a4.22 4.22 0 001.31 5.64 4.2 4.2 0 01-1.91-.52v.05a4.23 4.23 0 003.39 4.14 4.26 4.26 0 01-1.9.07 4.23 4.23 0 003.95 2.93A8.48 8.48 0 012 19.54a11.9 11.9 0 006.29 1.84c7.55 0 11.68-6.26 11.68-11.68l-.01-.53A8.18 8.18 0 0022.46 6z" />
+        </svg>
+      </a>
+      <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn" class="social-icon linkedin">
+        <!-- LinkedIn SVG -->
+        <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M4.98 3a2.5 2.5 0 11-.001 5.001A2.5 2.5 0 014.98 3zM3 8h4v12H3zm7 0h3.8v1.7h.05a4.16 4.16 0 013.75-2.07c4 0 4.75 2.64 4.75 6.07V20h-4v-5.5c0-1.3-.02-3-1.84-3s-2.13 1.44-2.13 2.92V20h-4z" />
+        </svg>
+      </a>
+    </div>
+    <p data-i18n="footer">© 2025 Bryam Company LTDA. Todos os direitos reservados.</p>
   </footer>
+  <div id="newsletterModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"
+    aria-hidden="true">
+    <div class="modal-content neumorph">
+      <button class="modal-close" aria-label="Fechar modal">&times;</button>
+      <h3 id="modalTitle">Assine nossa Newsletter</h3>
+      <form id="newsletterForm" novalidate>
+        <input type="email" id="newsletterEmail" placeholder="Seu e-mail" required />
+        <button type="submit">Assinar</button>
+        <p id="newsletterMsg" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+
+  <script>
+
+
+    // ====== MODO ESCURO ======
+    const modoBtn = document.getElementById('modo');
+    modoBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      modoBtn.textContent = document.body.classList.contains('dark') ? 'Modo Claro' : 'Modo Escuro';
+    });
+
+    // ====== SCROLL SPY + ANIMAÇÃO DE ENTRADA ======
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('nav a');
+
+    function scrollSpy() {
+      const scrollPos = window.scrollY + window.innerHeight / 3;
+
+      sections.forEach((section) => {
+        // ScrollSpy: atualiza menu ativo
+        if (
+          scrollPos >= section.offsetTop &&
+          scrollPos < section.offsetTop + section.offsetHeight
+        ) {
+          navLinks.forEach((link) => {
+            link.classList.remove('active');
+            if (link.getAttribute('href').slice(1) === section.id) {
+              link.classList.add('active');
+            }
+          });
+        }
+
+        // Animação: entra com fade + translate
+        const sectionTop = section.getBoundingClientRect().top;
+        const triggerPoint = window.innerHeight * 0.9; // 90% da altura da janela
+
+        if (sectionTop < triggerPoint) {
+          section.classList.add('visible');
+        }
+      });
+    }
+
+    window.addEventListener('scroll', scrollSpy);
+    window.addEventListener('load', scrollSpy); // ativa ao carregar
+
+
+    // ====== APARECER SEÇÕES COM ANIMAÇÃO NO SCROLL ======
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+    document.querySelectorAll('.section').forEach((el) => observer.observe(el));
+
+    // ====== VOLTAR AO TOPO ======
+    const backToTop = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 500) {
+        backToTop.classList.add('show');
+      } else {
+        backToTop.classList.remove('show');
+      }
+    });
+    backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    // ====== CARROSSEL DE DEPOIMENTOS ======
+    const carouselInner = document.getElementById('carouselInner');
+    const dots = document.querySelectorAll('.carousel-dot');
+    const prevBtn = document.getElementById('prev');
+    const nextBtn = document.getElementById('next');
+    let currentSlide = 0;
+    const totalSlides = dots.length;
+
+    function updateCarousel() {
+      carouselInner.style.transform = `translateX(-${currentSlide * 100}%)`;
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === currentSlide);
+        dot.setAttribute('aria-selected', i === currentSlide);
+        dot.tabIndex = i === currentSlide ? 0 : -1;
+      });
+    }
+    function nextSlide() {
+      currentSlide = (currentSlide + 1) % totalSlides;
+      updateCarousel();
+    }
+    function prevSlide() {
+      currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+      updateCarousel();
+    }
+    nextBtn.addEventListener('click', () => {
+      nextSlide();
+      resetInterval();
+    });
+    prevBtn.addEventListener('click', () => {
+      prevSlide();
+      resetInterval();
+    });
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        currentSlide = i;
+        updateCarousel();
+        resetInterval();
+      });
+    });
+    updateCarousel();
+
+    // Auto slide a cada 7s
+    let carouselInterval = setInterval(nextSlide, 7000);
+    function resetInterval() {
+      clearInterval(carouselInterval);
+      carouselInterval = setInterval(nextSlide, 7000);
+    }
+
+    // ====== VALIDAÇÃO FORMULÁRIO ======
+    const form = document.getElementById('formContato');
+    const nome = form.nome;
+    const email = form.email;
+    const mensagem = form.mensagem;
+    const msg = document.getElementById('msg');
+
+    function validateInput(input) {
+      if (!input.checkValidity()) {
+        input.classList.add('invalid');
+        input.classList.remove('valid');
+        return false;
+      } else {
+        input.classList.remove('invalid');
+        input.classList.add('valid');
+        return true;
+      }
+    }
+
+    form.addEventListener('input', (e) => {
+      validateInput(e.target);
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const isNomeValid = validateInput(nome);
+      const isEmailValid = validateInput(email);
+      const isMensagemValid = validateInput(mensagem);
+
+      if (isNomeValid && isEmailValid && isMensagemValid) {
+        msg.textContent = 'Mensagem enviada com sucesso! Obrigado pelo contato.';
+        msg.style.color = '#34c759';
+        form.reset();
+        nome.classList.remove('valid');
+        email.classList.remove('valid');
+        mensagem.classList.remove('valid');
+      } else {
+        msg.textContent = 'Por favor, preencha todos os campos corretamente.';
+        msg.style.color = '#ff453a';
+      }
+    });
+
+    //===FAQ===//
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', !expanded);
+        const answer = document.getElementById(btn.getAttribute('aria-controls'));
+        if (!expanded) {
+          answer.removeAttribute('hidden');
+        } else {
+          answer.setAttribute('hidden', '');
+        }
+      });
+    });
+
+    //===PROMOS==//
+    function startCountdown(endDate) {
+      const countdownEl = document.getElementById('countdownTimer');
+      function update() {
+        const now = new Date();
+        const diff = endDate - now;
+        if (diff <= 0) {
+          countdownEl.textContent = "Promoção encerrada!";
+          clearInterval(interval);
+          return;
+        }
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+        countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      }
+      update();
+      const interval = setInterval(update, 1000);
+    }
+    // Ajuste a data para a sua promoção (exemplo: 10 dias a partir de agora)
+    const promoEndDate = new Date();
+    promoEndDate.setDate(promoEndDate.getDate() + 10);
+    startCountdown(promoEndDate);
+
+    //===NEWS===//
+
+    const newsletterModal = document.getElementById('newsletterModal');
+    const newsletterCloseBtn = newsletterModal.querySelector('.modal-close');
+    const newsletterForm = document.getElementById('newsletterForm');
+    const newsletterEmail = document.getElementById('newsletterEmail');
+    const newsletterMsg = document.getElementById('newsletterMsg');
+
+    // Abrir modal após 10 segundos (exemplo)
+    setTimeout(() => {
+      newsletterModal.classList.add('show');
+      newsletterModal.setAttribute('aria-hidden', 'false');
+    }, 10000);
+
+    newsletterCloseBtn.addEventListener('click', () => {
+      newsletterModal.classList.remove('show');
+      newsletterModal.setAttribute('aria-hidden', 'true');
+    });
+
+    newsletterForm.addEventListener('submit', e => {
+      e.preventDefault();
+      if (newsletterEmail.checkValidity()) {
+        newsletterMsg.textContent = 'Obrigado por assinar!';
+        newsletterMsg.style.color = '#34c759';
+        newsletterForm.reset();
+      } else {
+        newsletterMsg.textContent = 'Por favor, insira um e-mail válido.';
+        newsletterMsg.style.color = '#ff453a';
+      }
+    });
+
+    //===LANG===//
+    const langToggle = document.getElementById('langToggle');
+    const translations = {
+      pt: {
+        sobre: 'Quem Somos',
+        sobreTexto1: 'Somos uma empresa dedicada a criar experiências digitais incríveis...',
+        sobreTexto2: 'Nossa missão é entregar produtos com alta qualidade...',
+        servicos: 'Nossos Serviços',
+        servico1: 'Design Moderno',
+        servico2: 'Desenvolvimento Web',
+        servico3: 'Consultoria',
+        servico4: 'Suporte Técnico',
+        depoimentos: 'Depoimentos',
+        dep1: '"Excelente serviço e atendimento!...',
+        depAutor1: '- João Silva',
+        faq: 'FAQ - Perguntas Frequentes',
+        faq1q: 'Como funciona o processo de desenvolvimento?',
+        faq1a: 'Nosso processo envolve análise, design...',
+        contato: 'Contato',
+        nomePlaceholder: 'Seu nome',
+        emailPlaceholder: 'Seu e-mail',
+        mensagemPlaceholder: 'Sua mensagem',
+        enviar: 'Enviar',
+        promoText: 'Promoção termina em:',
+        newsletterTitle: 'Assine nossa Newsletter',
+        newsletterPlaceholder: 'Seu e-mail',
+        newsletterSubmit: 'Assinar',
+        modoEscuro: 'Modo Escuro',
+        modoClaro: 'Modo Claro',
+        footer: 'Todos os direitos reservados.'
+      },
+      en: {
+        sobre: 'About Us',
+        sobreTexto1: 'We are a company dedicated to creating amazing digital experiences...',
+        sobreTexto2: 'Our mission is to deliver high-quality, elegant products...',
+        servicos: 'Our Services',
+        servico1: 'Modern Design',
+        servico2: 'Web Development',
+        servico3: 'Consulting',
+        servico4: 'Technical Support',
+        depoimentos: 'Testimonials',
+        dep1: '"Excellent service and support! They exceeded expectations..."',
+        depAutor1: '- John Smith',
+        faq: 'FAQ - Frequently Asked Questions',
+        faq1q: 'How does the development process work?',
+        faq1a: 'Our process includes analysis, design, coding...',
+        contato: 'Contact',
+        nomePlaceholder: 'Your name',
+        emailPlaceholder: 'Your email',
+        mensagemPlaceholder: 'Your message',
+        enviar: 'Send',
+        promoText: 'Promotion ends in:',
+        newsletterTitle: 'Subscribe to our Newsletter',
+        newsletterPlaceholder: 'Your email',
+        newsletterSubmit: 'Subscribe',
+        modoEscuro: 'Dark Mode',
+        modoClaro: 'Light Mode',
+        footer: 'All rights reserved.'
+      }
+    };
+    let currentLang = 'pt';
+
+    function translatePage(lang) {
+      document.querySelector('section#sobre h2').textContent = translations[lang].sobre;
+      document.querySelector('section#servicos h2').textContent = translations[lang].servicos;
+      document.querySelector('section#depoimentos h2').textContent = translations[lang].depoimentos;
+      document.querySelector('section#contato h2').textContent = translations[lang].contato;
+      const faqTitle = document.querySelector('section#faq h2');
+      if (faqTitle) faqTitle.textContent = translations[lang].faq;
+      document.querySelector('.promo-countdown p').firstChild.textContent = translations[lang].promoText + ' ';
+      document.getElementById('modalTitle').textContent = translations[lang].newsletterTitle;
+      document.getElementById('newsletterEmail').placeholder = translations[lang].newsletterPlaceholder;
+      document.querySelector('#newsletterForm button[type="submit"]').textContent = translations[lang].newsletterSubmit;
+      const modeBtn = document.getElementById('modo');
+      modeBtn.textContent = (modeBtn.classList.contains('dark-mode')) ? translations[lang].modoClaro : translations[lang].modoEscuro;
+    }
+
+    langToggle.addEventListener('click', () => {
+      currentLang = currentLang === 'pt' ? 'en' : 'pt';
+      langToggle.textContent = currentLang.toUpperCase();
+      translatePage(currentLang);
+    });
+
+    //====MAP====/
+    const map = L.map('map').setView([-23.55052, -46.633308], 13); // Exemplo: São Paulo
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    L.marker([-23.55052, -46.633308]).addTo(map)
+      .bindPopup('Aqui estamos!')
+      .openPopup();
+
+  </script>
 </body>
+
 </html>
