@@ -899,7 +899,34 @@
     }
 
     /*Cookie*/
-    /* Botões de Cookie Consent */
+    .cookie-banner {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: 800px;
+      width: 90%;
+      z-index: 9999;
+      background: var(--color-glass-bg);
+      padding: 2rem;
+      border-radius: 28px 28px 0 0;
+      box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.25);
+      display: none;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .cookie-banner.show {
+      display: block;
+      opacity: 1;
+    }
+
+    body.dark .cookie-banner {
+      background: var(--dark-glass-bg);
+      color: var(--dark-text);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
     .cookie-buttons {
       margin-top: 1.5rem;
       display: flex;
@@ -1170,47 +1197,48 @@
     </div>
   </div>
   <!--COOKIE-->
-  <div id="cookieBanner" class="glass">
+  <div id="cookieBanner" class="glass cookie-banner" role="dialog" aria-modal="true" aria-hidden="true">
     <p>Usamos cookies para melhorar sua experiência. Você aceita nossa política de cookies?</p>
     <button id="acceptCookies" class="cookie-btn"><span>Aceitar</span></button>
     <button id="rejectCookies" class="cookie-btn reject"><span>Recusar</span></button>
   </div>
 
   <script>
+    function getCookie(name) {
+      const cookies = document.cookie.split('; ');
+      for (let c of cookies) {
+        const [key, value] = c.split('=');
+        if (key === name) return decodeURIComponent(value);
+      }
+      return null;
+    }
+
     function setCookie(name, value, days) {
-      const expires = new Date(Date.now() + days * 864e5).toUTCString();
+      const expires = new Date(Date.now() + days * 86400000).toUTCString();
       document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
     }
 
-    function getCookie(name) {
-      return document.cookie.split('; ').reduce((r, v) => {
-        const parts = v.split('=');
-        return parts[0] === name ? decodeURIComponent(parts[1]) : r;
-      }, '');
-    }
-
-    const cookieBanner = document.getElementById('cookieBanner');
-    const acceptBtn = document.getElementById('acceptCookies');
-    const rejectBtn = document.getElementById('rejectCookies');
-
-    function checkCookieConsent() {
-      const consent = getCookie('cookieConsent');
-      if (!consent) {
-        cookieBanner.style.display = 'block';
+    // Exibir banner de cookies se ainda não aceitou ou recusou
+    window.addEventListener('load', () => {
+      const cookieConsent = getCookie('cookieConsent');
+      const banner = document.getElementById('cookieBanner');
+      if (!cookieConsent) {
+        banner.classList.add('show');
+        banner.setAttribute('aria-hidden', 'false');
       }
-    }
+    });
 
-    acceptBtn.addEventListener('click', () => {
+    document.getElementById('acceptCookies').addEventListener('click', () => {
       setCookie('cookieConsent', 'accepted', 365);
-      cookieBanner.style.display = 'none';
+      document.getElementById('cookieBanner').classList.remove('show');
+      document.getElementById('cookieBanner').setAttribute('aria-hidden', 'true');
     });
 
-    rejectBtn.addEventListener('click', () => {
+    document.getElementById('rejectCookies').addEventListener('click', () => {
       setCookie('cookieConsent', 'rejected', 365);
-      cookieBanner.style.display = 'none';
+      document.getElementById('cookieBanner').classList.remove('show');
+      document.getElementById('cookieBanner').setAttribute('aria-hidden', 'true');
     });
-
-    checkCookieConsent();
 
     function checkNewsletterCookie() {
       const subscribed = getCookie('newsletterSubscribed');
